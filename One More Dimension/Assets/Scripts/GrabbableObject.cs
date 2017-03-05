@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof (Rigidbody))]
 public class GrabbableObject : MonoBehaviour {
     protected bool debug = true;
     private const int VEL_ARRAY_SIZE = 3;
@@ -69,7 +70,7 @@ public class GrabbableObject : MonoBehaviour {
         return averageVelocity;
     }
 
-    public virtual void activate () {
+    public virtual void activate (ViveController controller) {
     }
 
     //~~~~~~~~~~~~~~~~~~~~ METHOD CALLS ~~~~~~~~~~~~~~~~~~~~//

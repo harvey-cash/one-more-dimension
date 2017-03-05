@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ViveController : MonoBehaviour {
 
@@ -41,6 +42,7 @@ public class ViveController : MonoBehaviour {
     //~~~~~~~~~~~~~~~~~~~~ INITIALISATION ~~~~~~~~~~~~~~~~~~~~//
 
     private SteamVR_TrackedObject trackedObj;
+    public int getTrackedIndex() { return (int)trackedObj.index; }
     private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input((int)trackedObj.index); } }
     private void controllerInit() {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
@@ -73,8 +75,11 @@ public class ViveController : MonoBehaviour {
     //called by an object when it is grabbed by something new
     public void forgetGrabbed() {
         haveGrabbed = null;
-        releaseOnNextLift = true;        
+        releaseOnNextLift = true;
+        setVisible(true);
     }
+
+    //~~~~~~~~~~~~~~~~~~~~ BUTTON INPUTS ~~~~~~~~~~~~~~~~~~~~//
 
     private void checkButtonInputs () {
         //if already grabbing something in toggle grab mode, release on the following lift
@@ -96,8 +101,13 @@ public class ViveController : MonoBehaviour {
 
         //activate
         if (getInput(Action.ACTIVATE, Input.CLICK) && haveGrabbed != null) {
-            haveGrabbed.activate();
+            haveGrabbed.activate(this);
             SteamVR_Controller.Input((int)trackedObj.index).TriggerHapticPulse(3000);
+        }
+
+        //menu pressed
+        if (getInput(Action.MENU, Input.CLICK)) {
+            SceneManager.LoadScene("main");
         }
     }
 
