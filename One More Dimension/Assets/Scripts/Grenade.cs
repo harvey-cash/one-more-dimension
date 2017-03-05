@@ -20,13 +20,10 @@ public class Grenade : GrabbableObject {
             Vector3 randVector = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
             randVector = randVector / randVector.magnitude;
 
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sphere.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-            sphere.transform.position = gameObject.transform.position + (0.05f * randVector);
-            sphere.GetComponent<Renderer>().material.color = Color.white;
-            Rigidbody sphereBody = sphere.AddComponent<Rigidbody>();
-            sphereBody.useGravity = false;
-            sphereBody.velocity = FRAG_VELOCITY * randVector;
+            GameObject bullet = Instantiate(Resources.Load("Prefabs/Bullet", typeof(GameObject))) as GameObject;
+            bullet.transform.position = gameObject.transform.position + (0.05f * randVector);
+            bullet.GetComponent<Rigidbody>().velocity = FRAG_VELOCITY * randVector;
+            StartCoroutine(bullet.GetComponent<Bullet>().selfDestruct());
         }
 
         Destroy(gameObject);

@@ -31,13 +31,11 @@ public class Gun : GrabbableObject {
         for(int i = 0; i < 5; i++) {
             bullets--;
 
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sphere.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-            sphere.transform.position = aimVector.position + (0.05f * aimVector.forward);
-            sphere.GetComponent<Renderer>().material.color = Color.white;
-            Rigidbody sphereBody = sphere.AddComponent<Rigidbody>();
-            sphereBody.useGravity = false;
-            sphereBody.velocity = SHOT_VELOCITY * aimVector.forward;
+            GameObject bullet = Instantiate(Resources.Load("Prefabs/Bullet", typeof(GameObject))) as GameObject;
+            bullet.transform.position = aimVector.position + (0.05f * aimVector.forward);
+            bullet.GetComponent<Rigidbody>().velocity = SHOT_VELOCITY * aimVector.forward;
+            StartCoroutine(bullet.GetComponent<Bullet>().selfDestruct());
+
             SteamVR_Controller.Input(controller.getTrackedIndex()).TriggerHapticPulse(1000);
 
             yield return new WaitForSeconds(SHOT_INTERVAL);
