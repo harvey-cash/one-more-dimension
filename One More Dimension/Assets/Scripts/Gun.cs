@@ -24,22 +24,28 @@ public class Gun : GrabbableObject {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
     public Transform aimVector;
-    private int bullets = 100;
-    private const float SHOT_INTERVAL = 0.1f, SHOT_VELOCITY = 10f;
+    private int bullets = 20, BURST_COUNT = 3;
+    private const float SHOT_INTERVAL = 0.2f, SHOT_VELOCITY = 20f;
+    private bool toggle = true;
     
     private IEnumerator shoot(ViveController controller) {
-        for(int i = 0; i < 5; i++) {
-            bullets--;
+        if (toggle && bullets > 0) {
+            toggle = false;
 
-            GameObject bullet = Instantiate(Resources.Load("Prefabs/Bullet", typeof(GameObject))) as GameObject;
-            bullet.transform.position = aimVector.position + (0.05f * aimVector.forward);
-            bullet.GetComponent<Rigidbody>().velocity = SHOT_VELOCITY * aimVector.forward;
-            StartCoroutine(bullet.GetComponent<Bullet>().selfDestruct());
+            for (int i = 0; i < BURST_COUNT; i++) {
+                bullets--;
+                GameObject bullet = Instantiate(Resources.Load("Prefabs/Bullet", typeof(GameObject))) as GameObject;
+                bullet.transform.position = aimVector.position + (0.05f * aimVector.forward);
+                bullet.GetComponent<Rigidbody>().velocity = SHOT_VELOCITY * aimVector.forward;
+                StartCoroutine(bullet.GetComponent<Bullet>().selfDestruct());
 
-            SteamVR_Controller.Input(controller.getTrackedIndex()).TriggerHapticPulse(1000);
+                SteamVR_Controller.Input(controller.getTrackedIndex()).TriggerHapticPulse(1000);
 
-            yield return new WaitForSeconds(SHOT_INTERVAL);
-        }        
+                yield return new WaitForSeconds(SHOT_INTERVAL);
+            }
+
+            toggle = true;
+        }
     }
 
     public void setBullets(int count) {
